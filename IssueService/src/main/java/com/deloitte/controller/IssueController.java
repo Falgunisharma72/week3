@@ -125,6 +125,10 @@ public class IssueController {
 
 			return ResponseEntity.status(HttpStatus.OK).body(issues);
 
+		} catch (IssueNotFoundException e) {
+
+			throw e;
+
 		} catch (IllegalArgumentException e) {
 
 			throw e;
@@ -147,6 +151,10 @@ public class IssueController {
 			List<Issue> issues = issueService.getIssuesByAssigneeId(assigneeId);
 
 			return ResponseEntity.status(HttpStatus.OK).body(issues);
+
+		} catch (IssueNotFoundException e) {
+
+			throw e;
 
 		} catch (IllegalArgumentException e) {
 

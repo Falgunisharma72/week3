@@ -1,0 +1,4 @@
+target/*.jar.original
+.mvn
+src
+*.md

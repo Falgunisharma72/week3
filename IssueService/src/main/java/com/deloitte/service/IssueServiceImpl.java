@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,6 +25,11 @@ public class IssueServiceImpl implements IssueService {
 
 	@Autowired
 	RestTemplate restTemplate;
+
+	// Base URL of the ProjectService. Defaults to localhost for local runs; containers
+	// override it with the PROJECT_SERVICE_URL environment variable.
+	@Value("${project.service.url:http://localhost:8082}")
+	private String projectServiceUrl;
 
 	@Override
 	public List<Issue> getAllIssues() {
@@ -205,7 +211,7 @@ public class IssueServiceImpl implements IssueService {
 	public List<Issue> getIssuesByOwnerId(Long ownerId) {
 		validateOwnerId(ownerId);
 
-		String url = "http://localhost:8082/api/projects/owner/" + ownerId;
+		String url = projectServiceUrl + "/api/projects/owner/" + ownerId;
 
 		ProjectDto[] projectArray = restTemplate.getForObject(url, ProjectDto[].class);
 
