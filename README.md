@@ -15,10 +15,11 @@ Frontend: the `week4` repo (React, calls the gateway on `http://localhost:8080`)
 ## Run locally in Spring Tool Suite (STS)
 
 1. **Java 21** - STS: *Window → Preferences → Java → Installed JREs* must contain a JDK 21 (the services do not compile on 17).
-2. **MySQL** running on `localhost:3306`. Create the schema once: `CREATE DATABASE week3;`
-   The username/password are hard-coded in `UserService`, `ProjectService` and `IssueService`
-   (`src/main/resources/application.properties` → `spring.datasource.username/password`, currently `root` / `g9f500082TS`).
-   Change those three files to your own MySQL credentials. Tables are created automatically (`ddl-auto=update`).
+2. **Database: nothing to install.** The three services connect to the AWS RDS MySQL instance `database-1`
+   (endpoint, `admin` user and password are hard-coded in each `src/main/resources/application.properties`).
+   The `week3` schema and tables are created automatically. Each service uses at most 3 connections
+   (`spring.datasource.hikari.maximum-pool-size=3`) because the small RDS instance only allows ~60 in total.
+   The laptop needs internet access to `database-1...rds.amazonaws.com:3306`.
 3. *File → Import → Existing Maven Projects* → select this folder → tick all five projects.
 4. Start them **in this order** (right-click → *Run As → Spring Boot App*), waiting for each to finish starting:
    `EurekaServer` → `UserService`, `ProjectService`, `IssueService` → `ApiGateway`.
@@ -26,6 +27,8 @@ Frontend: the `week4` repo (React, calls the gateway on `http://localhost:8080`)
 6. Start the frontend (`week4`: `npm install && npm start`) and open http://localhost:3000.
 
 Port 8080 must be free for the gateway (stop anything else using it).
+The first page load can take a few seconds - every query travels to RDS in us-east-1.
+CORS: the gateway accepts requests from any origin, so React may run on any port or host.
 
 ## API quick check
 

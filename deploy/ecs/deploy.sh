@@ -34,7 +34,9 @@ task_ip() { # name  -> private IP of the running task (waits until the rollout h
 DB="jdbc:mysql://database-1.cps8agaaum93.us-east-1.rds.amazonaws.com:3306/week3_ecs?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
 # The RDS master password is NOT stored in git - export it before running:  export DB_PASSWORD='<your RDS password>'
 : "${DB_PASSWORD:?export DB_PASSWORD (the RDS master password) before running this script}"
-DBENV=("SPRING_DATASOURCE_URL=$DB" "SPRING_DATASOURCE_USERNAME=admin" "SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD")
+DBENV=("SPRING_DATASOURCE_URL=$DB" "SPRING_DATASOURCE_USERNAME=admin" "SPRING_DATASOURCE_PASSWORD=$DB_PASSWORD"
+       # db.t3.micro allows ~60 connections in total - keep each service's pool small
+       "SPRING_DATASOURCE_HIKARI_MAXIMUMPOOLSIZE=3" "SPRING_DATASOURCE_HIKARI_MINIMUMIDLE=1")
 
 register eureka-server 8761; run_service eureka-server keep
 EUREKA=$(task_ip eureka-server); echo "eureka task IP: $EUREKA"
