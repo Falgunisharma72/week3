@@ -39,6 +39,14 @@ GET  http://localhost:8080/api/projects
 GET  http://localhost:8080/api/issues
 ```
 
+## Live on AWS
+
+* **Milestone 1 (EC2):** http://issue-tracking-bucket-027fs.s3-website-us-east-1.amazonaws.com - gateway on the `apiS` instance,
+  reachable on port 80 (iptables forwards 80 → 8080; many office networks block 8080).
+* **Milestone 2 (ECS Fargate):** http://its-ecs-frontend-027fs.s3-website-us-east-1.amazonaws.com - the gateway service sits behind the
+  Application Load Balancer `its-ecs-alb` (listener :80 → target group `its-gateway-tg`, container port 8080, health check `/api/users`),
+  which gives a fixed address even though Fargate task IPs change on every deployment.
+
 ## AWS deployment (case study milestones)
 
 * **Milestone 1** - JARs on EC2 (one instance per service, Java 21, systemd), RDS MySQL, frontend on S3.
